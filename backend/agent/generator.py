@@ -32,7 +32,8 @@ def generate(intent, confidence, user_message, chat_history, pii):
         pass
 
     elif intent == "clarify":
-        pass
+        return {"text": "Could you give me a bit more detail? I want to make sure I point you in the right direction.", "card": None}
+
 
     elif intent == "escalate":
-        pass
+        return {"text": "I'm sorry to hear that. Let me connect you with our team right away.", "card": {"type": "handoff"}}

@@ -39,27 +39,6 @@ def intent_classify(text):
     2. tool
     The user wants to take an action — book an appointment, check availability, or get a price estimate for their specific situation.
 
-    Examples:
-    User: "I want to book a lawn mow for next Saturday"
-    intent: tool
-    confidence: 0.96
-
-    User: "Is tomorrow morning available?"
-    intent: tool
-    confidence: 0.95
-
-    User: "I have a large yard, how much would it cost?"
-    intent: tool
-    confidence: 0.92
-
-    User: "Can you book me in for Friday at 10am?"
-    intent: tool
-    confidence: 0.97
-
-    User: "I'll take the premium package"
-    intent: tool
-    confidence: 0.94
-
     3. clarify
     The user message is too vague, incomplete, or ambiguous to determine what they need.
 
@@ -110,10 +89,68 @@ def intent_classify(text):
 
     ---
 
+    TOOL SELECTION:
+
+    If intent is tool, also return a third line:
+    tool: <price_estimator|check_availability|book_visit|none>
+
+    If intent is not tool, return:
+    tool: none
+
+    Examples:
+
+    User: "I want to book a lawn mow for next Saturday"
+    intent: tool
+    confidence: 0.96
+    tool: book_visit
+
+    User: "Can you book me in for Friday at 10am?"
+    intent: tool
+    confidence: 0.97
+    tool: book_visit
+
+    User: "I'll take the premium package, book me in"
+    intent: tool
+    confidence: 0.94
+    tool: book_visit
+
+    User: "Is tomorrow morning available?"
+    intent: tool
+    confidence: 0.95
+    tool: check_availability
+
+    User: "Do you have any slots open this weekend?"
+    intent: tool
+    confidence: 0.93
+    tool: check_availability
+
+    User: "What times are available next week?"
+    intent: tool
+    confidence: 0.92
+    tool: check_availability
+
+    User: "I have a large yard, how much would it cost?"
+    intent: tool
+    confidence: 0.92
+    tool: price_estimator
+
+    User: "Can you give me a price estimate for my property?"
+    intent: tool
+    confidence: 0.91
+    tool: price_estimator
+
+    User: "How much would it be for a corner lot with a backyard?"
+    intent: tool
+    confidence: 0.93
+    tool: price_estimator
+
+    ---
+
     OUTPUT FORMAT:
-    Return exactly two lines, nothing else:
+    Return exactly three lines, nothing else:
     intent: <rag|tool|clarify|escalate>
     confidence: <number between 0.0 and 1.0>
+    tool: <price_estimator|check_availability|book_visit|none>
 
     Do not explain your reasoning. Do not add any other text."""
 
@@ -127,11 +164,14 @@ def intent_classify(text):
 
     content = response.choices[0].message.content.strip().lower()
     lines = content.split("\n")
+
     intent = lines[0].split(": ")[1].strip()
     confidence = float(lines[1].split(": ")[1].strip())
+    tool = lines[2].split(": ")[1].strip()
 
     if confidence < CONFIDENCE_ESCALATE: intent = "escalate"
     elif confidence < CONFIDENCE_CLARIFY: intent = "clarify"
 
-    return {"intent": intent , "confidence": confidence}
+    
+    return {"intent": intent , "confidence": confidence, "tool": tool}
     
