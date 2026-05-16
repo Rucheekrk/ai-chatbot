@@ -1,0 +1,16 @@
+name: ai-chatbot
+services:
+    db:
+        image: pgvector/pgvector:pg16
+        environment:
+            POSTGRES_DB: chatbot
+            POSTGRES_USER: user
+            POSTGRES_PASSWORD: rrk123
+        container_name: chatbot-db
+        ports:
+            - "5433:5432"
+        volumes:
+            - chatbot_pgdata:/var/lib/postgresql/data
+      
+volumes:
+    chatbot_pgdata:

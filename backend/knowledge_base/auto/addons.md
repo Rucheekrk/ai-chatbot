@@ -1,0 +1,5 @@
+- Pet hair removal: +$25
+- Engine bay degrease: +$40
+- Headlight restoration: +$60/pair
+- Leather conditioning: +$35
+- Odor treatment (ozone): +$75

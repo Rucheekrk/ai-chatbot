@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>localchat — AI for Local Businesses</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; background: #f0eee9; height: 100%; overflow: hidden; }
+  body { font-family: "Plus Jakarta Sans", -apple-system, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  #root { height: 100%; }
+
+  /* Direction switcher */
+  .dir-switcher {
+    position: fixed; top: 14px; left: 50%; transform: translateX(-50%);
+    z-index: 9999;
+    display: flex; align-items: center; gap: 4px;
+    background: rgba(255,255,255,.92);
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    border: 1px solid rgba(41,38,27,.10);
+    border-radius: 999px;
+    padding: 5px;
+    box-shadow: 0 8px 32px -8px rgba(41,38,27,.18), 0 2px 6px rgba(41,38,27,.06);
+    font-family: "Plus Jakarta Sans", sans-serif;
+  }
+  .dir-switcher__brand {
+    padding: 6px 10px 6px 14px;
+    font-size: 12px; font-weight: 700; letter-spacing: -.01em;
+    color: #29261b;
+    display: flex; align-items: center; gap: 8px;
+    border-right: 1px solid rgba(41,38,27,.10);
+    margin-right: 4px;
+  }
+  .dir-switcher__brand-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #d97757;
+    box-shadow: 0 0 0 3px rgba(217,119,87,.18);
+  }
+  .dir-switcher__tab {
+    appearance: none; -webkit-appearance: none; border: 0; background: transparent;
+    padding: 8px 14px;
+    font-family: inherit; font-size: 12.5px; font-weight: 600;
+    color: rgba(41,38,27,.62);
+    border-radius: 999px;
+    cursor: pointer;
+    display: flex; align-items: center; gap: 7px;
+    transition: color .15s ease, background .15s ease;
+    letter-spacing: -.005em;
+    white-space: nowrap;
+  }
+  .dir-switcher__tab:hover { color: #29261b; background: rgba(41,38,27,.04); }
+  .dir-switcher__tab[aria-selected="true"] {
+    color: #fff; background: #29261b;
+  }
+  .dir-switcher__tab[aria-selected="true"]:hover { background: #29261b; }
+  .dir-switcher__tag {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px; font-weight: 600;
+    padding: 2px 6px; border-radius: 4px;
+    background: rgba(41,38,27,.08);
+    color: rgba(41,38,27,.7);
+    letter-spacing: .02em;
+  }
+  .dir-switcher__tab[aria-selected="true"] .dir-switcher__tag {
+    background: rgba(255,255,255,.18); color: rgba(255,255,255,.85);
+  }
+  .dir-switcher__kbd {
+    margin-left: 6px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 9.5px; font-weight: 500;
+    padding: 1px 5px; border-radius: 4px;
+    background: rgba(41,38,27,.06);
+    color: rgba(41,38,27,.55);
+  }
+  .dir-switcher__tab[aria-selected="true"] .dir-switcher__kbd {
+    background: rgba(255,255,255,.14); color: rgba(255,255,255,.75);
+  }
+
+  /* Full-bleed direction stage */
+  .stage {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .stage__scale {
+    transform-origin: center center;
+    width: 1300px; height: 880px;
+    background: transparent;
+  }
+
+  /* Mini label in corner */
+  .stage__hint {
+    position: fixed; bottom: 14px; left: 14px; z-index: 50;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10.5px; color: rgba(41,38,27,.5);
+    background: rgba(255,255,255,.7);
+    padding: 6px 10px; border-radius: 999px;
+    border: 1px solid rgba(41,38,27,.08);
+    backdrop-filter: blur(10px);
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="scenarios.jsx"></script>
+<script type="text/babel" src="chat-engine.jsx"></script>
+<script type="text/babel" src="direction-warm.jsx"></script>
+<script type="text/babel" src="direction-schematic.jsx"></script>
+<script type="text/babel" src="direction-bento.jsx"></script>
+
+<script type="text/babel">
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "business": "auto"
+}/*EDITMODE-END*/;
+
+const ARTBOARD_W = 1300;
+const ARTBOARD_H = 880;
+
+const DIRECTIONS = [
+  { id: 'warm', tag: 'A', name: 'Local & Loved', Component: () => WarmDirection, defaultView: 'customer', tone: 'Warm SMB · Editorial' },
+  { id: 'schem', tag: 'B', name: 'System Trace', Component: () => SchemDirection, defaultView: 'dev', tone: 'Schematic · Mono' },
+  { id: 'bento', tag: 'C', name: 'Bento', Component: () => BentoDirection, defaultView: 'customer', tone: 'Modern · Grid' },
+];
+
+function ArtboardShell({ Direction, defaultView = 'customer', business, setBusiness, instanceKey }) {
+  const [view, setView] = React.useState(defaultView);
+  return (
+    <Direction business={business} view={view} setView={setView} setBusiness={setBusiness} />
+  );
+}
+
+function ScaledStage({ children, w = ARTBOARD_W, h = ARTBOARD_H, pad = 80, topPad = 110 }) {
+  const ref = React.useRef(null);
+  const [scale, setScale] = React.useState(1);
+  React.useEffect(() => {
+    const update = () => {
+      const vw = window.innerWidth - pad * 2;
+      const vh = window.innerHeight - topPad - pad;
+      const s = Math.min(vw / w, vh / h, 1);
+      setScale(s);
+    };
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, [w, h, pad, topPad]);
+  return (
+    <div className="stage" style={{ paddingTop: topPad - 40 }}>
+      <div className="stage__scale" ref={ref} style={{ transform: `scale(${scale})` }}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function DirectionSwitcher({ value, onChange }) {
+  return (
+    <div className="dir-switcher" role="tablist">
+      <div className="dir-switcher__brand">
+        <span className="dir-switcher__brand-dot"></span>
+        localchat
+      </div>
+      {DIRECTIONS.map((d, i) => (
+        <button key={d.id}
+          className="dir-switcher__tab"
+          aria-selected={value === d.id}
+          onClick={() => onChange(d.id)}>
+          <span className="dir-switcher__tag">{d.tag}</span>
+          {d.name}
+          <span className="dir-switcher__kbd">{i + 1}</span>
+        </button>
+      ))}
+      <button
+        className="dir-switcher__tab"
+        aria-selected={value === 'compare'}
+        onClick={() => onChange('compare')}
+        title="Side-by-side compare view">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style={{ opacity: .75 }}>
+          <rect x="0.5" y="2" width="3" height="8" rx="1" stroke="currentColor" strokeWidth="1.2"/>
+          <rect x="4.5" y="2" width="3" height="8" rx="1" stroke="currentColor" strokeWidth="1.2"/>
+          <rect x="8.5" y="2" width="3" height="8" rx="1" stroke="currentColor" strokeWidth="1.2"/>
+        </svg>
+        Compare all
+        <span className="dir-switcher__kbd">0</span>
+      </button>
+    </div>
+  );
+}
+
+function App() {
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const business = BUSINESSES[t.business] ? t.business : 'lawn';
+  const setBusiness = (id) => setTweak('business', id);
+
+  const [dir, setDir] = React.useState('warm');
+
+  // Keyboard shortcuts 1/2/3/0
+  React.useEffect(() => {
+    const onKey = (e) => {
+      if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable)) return;
+      if (e.key === '1') setDir('warm');
+      else if (e.key === '2') setDir('schem');
+      else if (e.key === '3') setDir('bento');
+      else if (e.key === '0') setDir('compare');
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  const activeDir = DIRECTIONS.find(d => d.id === dir);
+
+  return (
+    <>
+      <DirectionSwitcher value={dir} onChange={setDir} />
+
+      {dir === 'compare' ? (
+        <DesignCanvas>
+          <DCSection id="pitch" title="localchat · three directions"
+            subtitle="One product, three visual directions. Each artboard pairs the system architecture with a live chat demo. Toggle Customer ↔ Developer per artboard. Use the tabs above to focus on a single direction.">
+            {DIRECTIONS.map(d => {
+              const Direction = d.Component();
+              return (
+                <DCArtboard key={d.id} id={d.id} label={`${d.tag} · ${d.name}`} width={ARTBOARD_W} height={ARTBOARD_H}>
+                  <ArtboardShell Direction={Direction} business={business} setBusiness={setBusiness} defaultView={d.defaultView} />
+                </DCArtboard>
+              );
+            })}
+          </DCSection>
+        </DesignCanvas>
+      ) : (
+        activeDir && (
+          <ScaledStage>
+            <ArtboardShell
+              key={activeDir.id + ':' + business}
+              Direction={activeDir.Component()}
+              business={business}
+              setBusiness={setBusiness}
+              defaultView={activeDir.defaultView} />
+          </ScaledStage>
+        )
+      )}
+
+      {dir !== 'compare' && activeDir && (
+        <div className="stage__hint">
+          {activeDir.tag} · {activeDir.tone} &nbsp;·&nbsp; press <b>1</b>/<b>2</b>/<b>3</b> to switch · <b>0</b> compare
+        </div>
+      )}
+
+      <TweaksPanel title="Tweaks">
+        <TweakSection label="Demo business">
+          <TweakSelect label="Showcase"
+            value={business}
+            options={BIZ_LIST.map(b => ({ value: b.id, label: b.name }))}
+            onChange={(v) => setBusiness(v)} />
+          <div style={{ fontSize: 10.5, color: 'rgba(41,38,27,.55)', lineHeight: 1.45, marginTop: 4 }}>
+            Switches across all three directions.
+          </div>
+        </TweakSection>
+        <TweakSection label="Direction">
+          <TweakRadio label="Show"
+            value={dir}
+            options={[
+              { value: 'warm', label: 'A' },
+              { value: 'schem', label: 'B' },
+              { value: 'bento', label: 'C' },
+              { value: 'compare', label: 'All' },
+            ]}
+            onChange={setDir} />
+          <div style={{ fontSize: 10.5, color: 'rgba(41,38,27,.55)', lineHeight: 1.45, marginTop: 4 }}>
+            Or use the tab bar at the top of the page. Keyboard: 1 / 2 / 3 / 0.
+          </div>
+        </TweakSection>
+      </TweaksPanel>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+
+</body>
+</html>

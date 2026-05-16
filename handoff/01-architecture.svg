@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 820" font-family="-apple-system, system-ui, sans-serif">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#3d3a32"></path>
+    </marker>
+    <marker id="arr-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#b2483a"></path>
+    </marker>
+    
+  </defs>
+
+  <rect width="1200" height="820" fill="#faf8f3"></rect>
+
+  
+  <text x="60" y="50" class="section-label">localchat · architecture</text>
+  <text x="60" y="80" class="title">Decide before you generate</text>
+  <text x="60" y="102" class="sub">Every message is classified before any retrieval, tool call, or LLM generation runs. Cheap paths stay cheap; expensive paths only fire when warranted.</text>
+
+  
+  <text x="60" y="160" class="section-label">1 · Filter</text>
+  <text x="60" y="290" class="section-label">2 · Decide</text>
+  <text x="60" y="430" class="section-label">3 · Act</text>
+  <text x="60" y="640" class="section-label">4 · Verify · Reply</text>
+
+  
+  
+  <g>
+    <rect x="500" y="135" width="200" height="58" rx="8" fill="#fff" stroke="#29261b" stroke-width="1.5"></rect>
+    <text x="600" y="160" text-anchor="middle" class="nlabel">User</text>
+    <text x="600" y="178" text-anchor="middle" class="nsub">incoming message</text>
+  </g>
+
+  
+  <g>
+    <rect x="460" y="260" width="280" height="74" rx="8" fill="#fff" stroke="#b2483a" stroke-width="1.5"></rect>
+    <rect x="460" y="260" width="280" height="4" fill="#b2483a"></rect>
+    <text x="600" y="288" text-anchor="middle" class="nlabel">Input Guardrails</text>
+    <text x="600" y="306" text-anchor="middle" class="nsub">PII · off-topic · prompt-injection scan</text>
+    <text x="600" y="322" text-anchor="middle" class="nsub">~50–200ms · deterministic</text>
+  </g>
+
+  
+  <g>
+    <rect x="460" y="400" width="280" height="84" rx="8" fill="#fff" stroke="#3f6f4a" stroke-width="1.5"></rect>
+    <rect x="460" y="400" width="280" height="4" fill="#3f6f4a"></rect>
+    <text x="600" y="428" text-anchor="middle" class="nlabel">Agent · Decision Engine</text>
+    <text x="600" y="446" text-anchor="middle" class="nsub">classify: rag · tool · clarify · escalate · block</text>
+    <text x="600" y="462" text-anchor="middle" class="nsub">returns { decision, confidence, reasoning }</text>
+    <text x="600" y="476" text-anchor="middle" class="nsub">cheap model · ~600ms</text>
+  </g>
+
+  
+  <g>
+    <rect x="120" y="540" width="220" height="74" rx="8" fill="#fff" stroke="#3d3a32" stroke-width="1.5"></rect>
+    <text x="230" y="568" text-anchor="middle" class="nlabel">RAG</text>
+    <text x="230" y="586" text-anchor="middle" class="nsub">vector DB · top-3 docs</text>
+    <text x="230" y="602" text-anchor="middle" class="nsub">pricing · services · area · policies</text>
+  </g>
+
+  
+  <g>
+    <rect x="380" y="540" width="220" height="74" rx="8" fill="#fff" stroke="#3d3a32" stroke-width="1.5"></rect>
+    <text x="490" y="568" text-anchor="middle" class="nlabel">Tools</text>
+    <text x="490" y="586" text-anchor="middle" class="nsub">check_availability · book_visit</text>
+    <text x="490" y="602" text-anchor="middle" class="nsub">price_estimator · create_lead · ...</text>
+  </g>
+
+  
+  <g>
+    <rect x="640" y="540" width="220" height="74" rx="8" fill="#fff" stroke="#d89a2c" stroke-width="1.5"></rect>
+    <text x="750" y="568" text-anchor="middle" class="nlabel">Human Handoff</text>
+    <text x="750" y="586" text-anchor="middle" class="nsub">create_handoff → SMS/email owner</text>
+    <text x="750" y="602" text-anchor="middle" class="nsub">SLA: 1 business day</text>
+  </g>
+
+  
+  <g>
+    <rect x="900" y="540" width="220" height="74" rx="8" fill="#fff" stroke="#3d3a32" stroke-width="1.5" stroke-dasharray="4 3"></rect>
+    <text x="1010" y="568" text-anchor="middle" class="nlabel">Clarify</text>
+    <text x="1010" y="586" text-anchor="middle" class="nsub">no retrieval · ask follow-up</text>
+    <text x="1010" y="602" text-anchor="middle" class="nsub">conf &lt; 0.65</text>
+  </g>
+
+  
+  <g>
+    <rect x="380" y="680" width="440" height="50" rx="8" fill="#fff" stroke="#3d3a32" stroke-width="1.5"></rect>
+    <text x="600" y="704" text-anchor="middle" class="nlabel">Response Generation</text>
+    <text x="600" y="720" text-anchor="middle" class="nsub">LLM call · grounded in retrieval/tool results · streamed</text>
+  </g>
+
+  
+  <g>
+    <rect x="900" y="680" width="240" height="50" rx="8" fill="#fff" stroke="#b2483a" stroke-width="1.5"></rect>
+    <rect x="900" y="680" width="240" height="4" fill="#b2483a"></rect>
+    <text x="1020" y="704" text-anchor="middle" class="nlabel">Output Guardrails</text>
+    <text x="1020" y="720" text-anchor="middle" class="nsub">grounding · safety · regenerate-if-fail</text>
+  </g>
+
+  
+  <g>
+    <rect x="500" y="760" width="200" height="48" rx="8" fill="#29261b"></rect>
+    <text x="600" y="784" text-anchor="middle" class="nlabel" fill="#faf8f3">→ Reply to User</text>
+    <text x="600" y="800" text-anchor="middle" class="nsub" fill="#faf8f3">bubble · chips · cards</text>
+  </g>
+
+  
+  
+  <line x1="600" y1="193" x2="600" y2="258" stroke="#3d3a32" stroke-width="1.5" marker-end="url(#arr)"></line>
+  
+  <line x1="600" y1="334" x2="600" y2="398" stroke="#3d3a32" stroke-width="1.5" marker-end="url(#arr)"></line>
+  <text x="610" y="370" class="edge-label">pass</text>
+
+  
+  <path d="M 740 297 Q 980 297 980 480 Q 980 760 700 784" fill="none" stroke="#b2483a" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arr-red)"></path>
+  <text x="760" y="290" class="edge-label" fill="#b2483a">block → canned redirect</text>
+
+  
+  <path d="M 460 470 Q 350 470 230 538" fill="none" stroke="#3d3a32" stroke-width="1.5" marker-end="url(#arr)"></path>
+  <text x="280" y="510" class="edge-label">rag</text>
+  
+  <line x1="540" y1="484" x2="510" y2="538" stroke="#3d3a32" stroke-width="1.5" marker-end="url(#arr)"></line>
+  <text x="498" y="520" class="edge-label">tool</text>
+  
+  <line x1="660" y1="484" x2="710" y2="538" stroke="#d89a2c" stroke-width="1.5" marker-end="url(#arr)"></line>
+  <text x="690" y="520" class="edge-label" fill="#d89a2c">escalate</text>
+  
+  <path d="M 740 470 Q 870 470 1010 538" fill="none" stroke="#3d3a32" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arr)"></path>
+  <text x="900" y="510" class="edge-label">clarify</text>
+
+  
+  <path d="M 230 614 Q 230 680 380 705" fill="none" stroke="#3d3a32" stroke-width="1.5" marker-end="url(#arr)"></path>
+  
+  <line x1="490" y1="614" x2="510" y2="678" stroke="#3d3a32" stroke-width="1.5" marker-end="url(#arr)"></line>
+  
+  <path d="M 1010 614 Q 1010 660 820 705" fill="none" stroke="#3d3a32" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arr)"></path>
+
+  
+  <path d="M 750 614 Q 750 760 700 784" fill="none" stroke="#d89a2c" stroke-width="1.5" marker-end="url(#arr)"></path>
+  <text x="760" y="700" class="edge-label" fill="#d89a2c">handoff card</text>
+
+  
+  <line x1="820" y1="705" x2="898" y2="705" stroke="#3d3a32" stroke-width="1.5" marker-end="url(#arr)"></line>
+  
+  <path d="M 1020 730 Q 1020 770 700 784" fill="none" stroke="#3d3a32" stroke-width="1.5" marker-end="url(#arr)"></path>
+
+  
+  <g transform="translate(880,130)">
+    <rect x="0" y="0" width="280" height="160" rx="8" fill="#29261b"></rect>
+    <text x="14" y="22" class="section-label" fill="#d89a2c">SSE trace stream</text>
+    <text x="14" y="46" fill="#faf8f3" font-family="JetBrains Mono, monospace" font-size="10.5">data: {kind:&#34;guard&#34;, verdict:&#34;pass&#34;}</text>
+    <text x="14" y="62" fill="#faf8f3" font-family="JetBrains Mono, monospace" font-size="10.5">data: {kind:&#34;agent&#34;, decision:&#34;rag&#34;,</text>
+    <text x="14" y="76" fill="#faf8f3" font-family="JetBrains Mono, monospace" font-size="10.5">       confidence:0.94}</text>
+    <text x="14" y="92" fill="#faf8f3" font-family="JetBrains Mono, monospace" font-size="10.5">data: {kind:&#34;rag&#34;, hits:[...]}</text>
+    <text x="14" y="108" fill="#faf8f3" font-family="JetBrains Mono, monospace" font-size="10.5">data: {kind:&#34;guard&#34;, verdict:&#34;pass&#34;}</text>
+    <text x="14" y="124" fill="#faf8f3" font-family="JetBrains Mono, monospace" font-size="10.5">data: {kind:&#34;bot&#34;, text:&#34;...&#34;}</text>
+    <text x="14" y="146" fill="#a39c87" font-family="JetBrains Mono, monospace" font-size="10">Frontend binds to this stream.</text>
+  </g>
+
+  
+  <g transform="translate(40,540)">
+    <rect x="0" y="0" width="60" height="74" rx="6" fill="#faf8f3" stroke="#d97757" stroke-width="1"></rect>
+    <text x="30" y="20" text-anchor="middle" font-size="10" font-weight="700" fill="#d97757">CONF</text>
+    <text x="30" y="40" text-anchor="middle" font-size="18" font-weight="700" fill="#29261b">0.70</text>
+    <text x="30" y="58" text-anchor="middle" font-size="9" fill="#6b6657">decision</text>
+    <text x="30" y="70" text-anchor="middle" font-size="9" fill="#6b6657">threshold</text>
+  </g>
+</svg>
