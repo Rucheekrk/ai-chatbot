@@ -16,10 +16,6 @@ def intent_classify(text):
     The user is asking a question that can be answered from the business knowledge base. This includes questions about pricing, services offered, service area coverage, add-ons, or policies.
 
     Examples:
-    User: "How much does a lawn mow cost?"
-    intent: rag
-    confidence: 0.95
-
     User: "Do you service Sandy Springs?"
     intent: rag
     confidence: 0.97
@@ -142,6 +138,21 @@ def intent_classify(text):
     User: "How much would it be for a corner lot with a backyard?"
     intent: tool
     confidence: 0.93
+    tool: price_estimator
+
+    User: "How much does lawn mowing cost?"
+    intent: tool
+    confidence: 0.95
+    tool: price_estimator
+
+    User: "What's the price for lawn care?"
+    intent: tool
+    confidence: 0.94
+    tool: price_estimator
+
+    User: "What does your service cost?"
+    intent: tool
+    confidence: 0.94
     tool: price_estimator
 
     ---

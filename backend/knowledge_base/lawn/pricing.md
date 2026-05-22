@@ -1,11 +1,27 @@
 ## Mowing rates
-- Weekly mowing: $45 (lots ≤ ¼ acre)
-- Weekly mowing: $65 (¼ – ½ acre)
-- Weekly mowing: $85 (> ½ acre)
 
-Includes edging along walks/beds, string-trimming around obstacles, and blowing clippings off paths.
+Weekly mowing:
+- Small lot (≤ ¼ acre): $45
+- Medium lot (¼ – ½ acre): $65
+- Large lot (> ½ acre): $85
+
+Biweekly mowing:
+- Small lot (≤ ¼ acre): $50
+- Medium lot (¼ – ½ acre): $72
+- Large lot (> ½ acre): $95
+
+Includes edging along walks/beds, string-trimming around obstacles, and blowing clippings off all hard surfaces.
 
 ## Seasonal services
-- Spring cleanup: $180–$320 depending on yard size
-- Fall leaf removal: $150–$280
-- Mulch installation: $85/yard installed
+
+Spring cleanup:
+- Small lot: $180
+- Medium lot: $250
+- Large lot: $320
+
+Fall leaf removal:
+- Small lot: $150
+- Medium lot: $215
+- Large lot: $280
+
+Mulch installation: $85/yard installed (contact us for a quote based on quantity needed)

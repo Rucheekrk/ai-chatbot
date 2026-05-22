@@ -20,42 +20,53 @@ Build and demo a decision-driven AI chatbot that local service businesses can em
 
 ---
 
-## Phase 2 — Agent Pipeline (In Progress)
+## Phase 2 — Agent Pipeline (Done)
 ### Guardrails (agent/guardrails.py)
-- [x] INJECTION_PATTERNS, OFF_TOPIC_PATTERNS, PII_PATTERNS
-- [x] check_injection(), check_off_topic(), check_pii()
+- [x] INJECTION_PATTERNS, OFF_TOPIC_PATTERNS, CONTACT_PATTERNS, SENSITIVE_PATTERNS
+- [x] check_injection(), check_off_topic(), check_pii(), check_sensitive_pii()
 - [x] check_moderation() — OpenAI moderation API
-- [ ] check_llm_fallback() — GPT call for what regex misses
-- [x] run_input_guardrails()
+- [x] check_llm_fallback() — GPT call for what regex misses
+- [x] run_input_guardrails() — runs all checks in order
 
 ### Classifier (agent/classifier.py)
-- [ ] GPT-4o-mini call to classify intent: rag / tool / clarify / escalate
-- [ ] Returns intent + confidence score
-- [ ] Applies CONFIDENCE_CLARIFY and CONFIDENCE_ESCALATE thresholds
+- [x] GPT-4o-mini few-shot prompt: rag / tool / clarify / escalate
+- [x] Returns intent + confidence + tool
+- [x] Applies CONFIDENCE_CLARIFY and CONFIDENCE_ESCALATE thresholds
+- [x] Pricing questions route to tool/price_estimator (not rag)
 
-### RAG (rag/retriever.py)
-- [ ] Embed query with text-embedding-3-small
-- [ ] pgvector similarity search filtered by business
-- [ ] Returns top-K chunks above RAG_MIN_SCORE
+### RAG (rag/retriever.py + rag/embedder.py)
+- [x] embed() helper — text-embedding-3-small
+- [x] pgvector similarity search filtered by business
+- [x] Returns top-K chunks above RAG_MIN_SCORE
 
 ### Generator (agent/generator.py)
-- [ ] Builds system prompt per business + agent persona
-- [ ] Handles rag / tool / clarify / escalate response paths
-- [ ] Calls appropriate tool if intent = tool
-- [ ] Returns structured response: text + optional card (booking/estimate/handoff/lead)
+- [x] RAG path — Sage persona, GPT call with context chunks
+- [x] Tool path — price_estimator multi-turn flow (service → yard size → price + card)
+- [x] Clarify path — options cards for service and yard size
+- [x] Escalate path — GPT summary, create_handoff, handoff card
+- [x] check_availability + book_visit — stubbed (Google Calendar MCP TODO)
 
-### Tool Mocks (tools/)
-- [ ] price_estimator.py
-- [ ] create_lead.py
-- [ ] create_handoff.py
+### Tools & Actions
+- [x] tools/price_estimator.py — PRICES dict mock
+- [x] actions/create_lead.py — saves lead to Postgres
+- [x] actions/create_handoff.py — saves escalation + chat summary to Postgres
+
+### API Layer
+- [x] models/schemas.py — ChatRequest, ChatResponse (Pydantic)
+- [x] routes/chat.py — POST /chat, session state, multi-turn price estimator
+- [x] main.py — FastAPI app with CORS
+
+### Tested in Postman
+- [x] RAG path — general service questions
+- [x] Escalate path — complaint → handoff card
+- [x] Price estimator — 3-turn flow (question → service → yard size → price + card)
+- [x] Guardrails — injection, off-topic, sensitive PII, LLM fallback all blocking correctly
 
 ---
 
-## Phase 3 — Integration
+## Phase 3 — Integration (In Progress)
 - [ ] Google Calendar MCP: check_availability + book_visit
-- [ ] models/schemas.py: Pydantic request/response models
-- [ ] routes/chat.py: POST /chat endpoint
-- [ ] main.py: FastAPI app, session state (in-memory dict), mount routes
+- [ ] "Reach out to me later" flow — collect name/phone across turns, call create_lead
 
 ---
 

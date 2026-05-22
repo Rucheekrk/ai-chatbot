@@ -2,7 +2,6 @@ import os
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-import openai
 from db.connection import get_cursor
 from rag.embedder import embed
 
@@ -44,6 +43,8 @@ def seed():
     create_table()
     for business in os.listdir(KNOWLEDGE_BASE_PATH):
         business_path = os.path.join(KNOWLEDGE_BASE_PATH, business)
+        if not os.path.isdir(business_path):
+            continue
 
         for filename in os.listdir(business_path):
             filename_path = os.path.join(business_path, filename)
