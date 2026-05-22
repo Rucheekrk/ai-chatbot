@@ -51,7 +51,9 @@ def seed():
             with open(filename_path, "r") as f:
                 content = f.read()
 
-            insert_document(business, filename, content)
+            chunks = [c.strip() for c in content.split("##") if c.strip()]
+            for chunk in chunks:
+                insert_document(business, filename, chunk)
 
 
 if __name__ == "__main__":
