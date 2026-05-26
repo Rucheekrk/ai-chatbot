@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Green Acres Lawn Care — Sage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: #FBF6EC; font-family: "Plus Jakarta Sans", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  #root { height: 100%; display: flex; align-items: center; justify-content: center; }
+  @keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
+  .msg-input:focus { outline: none; border-color: #3E5C3A !important; }
+  .chip-btn:hover { background: #E0EFD8 !important; }
+  .send-btn:hover { background: #2d4429 !important; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="scenarios.jsx"></script>
+<script type="text/babel" src="lawn-poc-engine.jsx"></script>
+
+<script type="text/babel">
+const SUGGESTIONS = [
+  'How much is weekly mowing?',
+  "What's your service area?",
+  "What's included in spring cleanup?",
+  'Book a visit',
+  "What's your cancellation policy?",
+];
+
+function LawnChat() {
+  const { messages, isTyping, send, reset } = useChat({ business: 'lawn' });
+  const [input, setInput] = React.useState('');
+  const bottomRef = React.useRef(null);
+
+  React.useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, isTyping]);
+
+  const handleSend = () => {
+    const text = input.trim();
+    if (!text) return;
+    setInput('');
+    send(text);
+  };
+
+  const showSuggestions = messages.length <= 1;
+
+  return (
+    <div style={{ width: 440, height: 700, display: 'flex', flexDirection: 'column', background: '#fff', borderRadius: 20, boxShadow: '0 12px 48px rgba(0,0,0,0.13)', overflow: 'hidden' }}>
+
+      {/* Header */}
+      <div style={{ background: '#3E5C3A', padding: '18px 20px', display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'rgba(255,255,255,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>🌿</div>
+        <div>
+          <div style={{ color: '#fff', fontWeight: 700, fontSize: 15, lineHeight: 1.2 }}>Sage</div>
+          <div style={{ color: 'rgba(255,255,255,0.65)', fontSize: 12, marginTop: 2 }}>Green Acres Lawn Care</div>
+        </div>
+        <button onClick={reset} style={{ marginLeft: 'auto', background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.2)', color: 'rgba(255,255,255,0.85)', borderRadius: 8, padding: '6px 13px', cursor: 'pointer', fontSize: 12, fontWeight: 600, fontFamily: 'inherit' }}>
+          New chat
+        </button>
+      </div>
+
+      {/* Messages */}
+      <div style={{ flex: 1, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {messages.map(m => (
+          <div key={m.id} style={{ display: 'flex', flexDirection: 'column', alignItems: m.role === 'user' ? 'flex-end' : 'flex-start', gap: 6 }}>
+            {m.text && (
+              <div style={{
+                maxWidth: '80%', padding: '10px 14px', fontSize: 14, lineHeight: 1.55,
+                borderRadius: m.role === 'user' ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
+                background: m.role === 'user' ? '#3E5C3A' : '#F3F4F6',
+                color: m.role === 'user' ? '#fff' : '#1a1a1a',
+              }}>
+                {renderText(m.text)}
+              </div>
+            )}
+            {m.chips && (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                {m.chips.map(c => (
+                  <button key={c} className="chip-btn" onClick={() => send(c)}
+                    style={{ background: '#F0F7EE', border: '1.5px solid #C8E6C0', color: '#3E5C3A', borderRadius: 999, padding: '5px 13px', fontSize: 12.5, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>
+                    {c}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+
+        {/* Typing indicator */}
+        {isTyping && (
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{ background: '#F3F4F6', padding: '10px 14px', borderRadius: '16px 16px 16px 4px', display: 'flex', gap: 4, alignItems: 'center' }}>
+              {[0,1,2].map(i => (
+                <div key={i} style={{ width: 6, height: 6, borderRadius: '50%', background: '#9ca3af', animation: `bounce 1.2s ${i * 0.2}s infinite` }} />
+              ))}
+            </div>
+          </div>
+        )}
+        <div ref={bottomRef} />
+      </div>
+
+      {/* Suggestion chips — only on fresh chat */}
+      {showSuggestions && (
+        <div style={{ padding: '0 16px 12px', display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+          {SUGGESTIONS.map(s => (
+            <button key={s} className="chip-btn" onClick={() => send(s)}
+              style={{ background: '#F0F7EE', border: '1.5px solid #C8E6C0', color: '#3E5C3A', borderRadius: 999, padding: '6px 13px', fontSize: 12.5, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>
+              {s}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Input */}
+      <div style={{ padding: '12px 16px 16px', borderTop: '1px solid #F3F4F6', display: 'flex', gap: 8, alignItems: 'center' }}>
+        <input
+          className="msg-input"
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && handleSend()}
+          placeholder="Ask Sage anything..."
+          style={{ flex: 1, padding: '11px 16px', borderRadius: 999, border: '1.5px solid #E5E7EB', fontSize: 14, fontFamily: 'inherit', background: '#FAFAFA' }}
+        />
+        <button className="send-btn" onClick={handleSend}
+          style={{ background: '#3E5C3A', border: 'none', color: '#fff', width: 42, height: 42, borderRadius: '50%', cursor: 'pointer', fontSize: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          ↑
+        </button>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<LawnChat />);
+</script>
+</body>
+</html>

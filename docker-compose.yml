@@ -1,0 +1,38 @@
+name: ai-chatbot
+
+services:
+
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: chatbot-db
+    environment:
+      POSTGRES_DB: chatbot
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: rrk123
+    ports:
+      - "5433:5432"
+    volumes:
+      - chatbot_pgdata:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    container_name: chatbot-backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    env_file:
+      - ./backend/.env
+    environment:
+      DATABASE_URL: postgresql://user:rrk123@db:5432/chatbot
+
+  frontend:
+    build: ./frontend
+    container_name: chatbot-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  chatbot_pgdata:
