@@ -82,7 +82,7 @@ function LawnChat() {
                 {renderText(m.text)}
               </div>
             )}
-            {m.chips && (
+            {m.chips && m.id === [...messages].filter(msg => msg.role === 'bot').pop()?.id && (
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                 {m.chips.map(c => (
                   <button key={c} className="chip-btn" onClick={() => send(c)}

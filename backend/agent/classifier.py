@@ -3,7 +3,7 @@ from config import OPENAI_API_KEY, CLASSIFIER_MODEL, CONFIDENCE_CLARIFY, CONFIDE
 
 client = openai.OpenAI(api_key = OPENAI_API_KEY)
 
-def intent_classify(text):
+def intent_classify(text, chat_history=None):
     prompt = f"""You are an intent classifier for Sage, the AI assistant for Green Acres Lawn Care, a residential lawn care business in the Atlanta metro area.
 
     Your job is to read the user message and classify it into exactly one of four intents: rag, tool, clarify, or escalate.
@@ -110,6 +110,21 @@ def intent_classify(text):
     confidence: 0.94
     tool: book_visit
 
+    User: "Reach out to me later"
+    intent: tool
+    confidence: 0.95
+    tool: book_visit
+
+    User: "Please have someone call me"
+    intent: tool
+    confidence: 0.93
+    tool: book_visit
+
+    User: "Yes, please reach out"
+    intent: tool
+    confidence: 0.94
+    tool: book_visit
+
     User: "Is tomorrow morning available?"
     intent: tool
     confidence: 0.95
@@ -164,6 +179,20 @@ def intent_classify(text):
     tool: <price_estimator|check_availability|book_visit|none>
 
     Do not explain your reasoning. Do not add any other text."""
+
+    context_section = ""
+    if chat_history:
+        recent = chat_history[-2:]
+        lines = "\n".join([f"{m['role'].upper()}: {m['content']}" for m in recent])
+        context_section = f"""
+    CONVERSATION CONTEXT (last exchange):
+    {lines}
+
+    Use this context to classify accurately. Example: if the assistant just offered "Book now" or "Reach out to me later" and the user replies with either, classify as tool / book_visit.
+
+    ---
+"""
+        prompt = prompt.replace("    OUTPUT FORMAT:", context_section + "    OUTPUT FORMAT:")
 
     response = client.chat.completions.create(
         model = CLASSIFIER_MODEL,

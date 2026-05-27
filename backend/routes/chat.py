@@ -3,6 +3,7 @@ from models.schemas import ChatResponse, ChatRequest
 from agent.guardrails import run_input_guardrails
 from agent.classifier import intent_classify
 from agent.generator import generate
+from actions.create_lead import create_lead
 
 router = APIRouter()
 sessions = {}
@@ -21,13 +22,54 @@ def chat(request: ChatRequest):
     # 1. guardrails
     guardrail_result = run_input_guardrails(message)
     if guardrail_result["blocked"]:
-        return ChatResponse(text="I'm sorry, I can't help with that.", card=None)
+        # During lead capture, names/phone numbers look off-topic to the guardrails
+        # but injection, moderation, and sensitive PII still block normally
+        if session.get("awaiting_lead") and guardrail_result["reason"] == "off_topic":
+            pass  # allow through — handled by lead capture interceptor below
+        elif guardrail_result["reason"] == "off_topic":
+            strikes = session.get("off_topic_strikes", 0) + 1
+            session["off_topic_strikes"] = strikes
+            if strikes == 1:
+                return ChatResponse(text="I didn't quite catch that — could you tell me more about what you're looking for? I can help with pricing, scheduling, or questions about our services.", card=None)
+            elif strikes == 2:
+                return ChatResponse(text="I'm still not sure what you need. Are you looking for pricing, booking, or information about our services?", card=None)
+            else:
+                return ChatResponse(text="I'm sorry, I'm not able to help with that. Feel free to ask anything about our lawn care services.", card=None)
+        else:
+            return ChatResponse(text="I'm sorry, I can't help with that.", card=None)
+
+    session["off_topic_strikes"] = 0
 
     # 2. merge pii into session
     pii = guardrail_result["pii"].get("extracted", {})
     session["name"] = pii.get("name") or session.get("name")
     session["phone"] = pii.get("phone") or session.get("phone")
     session["email"] = pii.get("email") or session.get("email")
+
+    # 2.5 lead capture flow
+    if session.get("awaiting_lead"):
+        state = session["awaiting_lead"]
+        session["history"].append({"role": "user", "content": message})
+        if state == "name":
+            session["name"] = message
+            session["awaiting_lead"] = "phone"
+            response_text = "Thanks! And your phone number?"
+            session["history"].append({"role": "assistant", "content": response_text})
+            return ChatResponse(text=response_text, card=None)
+        elif state == "phone":
+            phone = session.get("phone") or message
+            create_lead(
+                name=session.get("name", "Unknown"),
+                phone=phone,
+                email=session.get("email"),
+                service_interest=session.get("service", "Unknown")
+            )
+            session.pop("awaiting_lead", None)
+            session.pop("service", None)
+            session.pop("yard_size", None)
+            response_text = "Perfect! Our team will reach out to you shortly. Is there anything else I can help you with?"
+            session["history"].append({"role": "assistant", "content": response_text})
+            return ChatResponse(text=response_text, card=None)
 
     # 3. handling pending tool responses
     if session.get("pending_tool") == "price_estimator":
@@ -58,7 +100,7 @@ def chat(request: ChatRequest):
         confidence = 1.0
         tool = "price_estimator"
     else:
-        classifier_result = intent_classify(guardrail_result["pii"].get("redacted_text", message))
+        classifier_result = intent_classify(guardrail_result["pii"].get("redacted_text", message), None if session.get("pending_tool") else session["history"][:-1])
         intent = classifier_result["intent"]
         confidence = classifier_result["confidence"]
         tool = classifier_result["tool"]

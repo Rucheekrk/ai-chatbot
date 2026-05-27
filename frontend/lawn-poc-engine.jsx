@@ -86,8 +86,8 @@ function useChat({ business }) {
       });
       const data = await res.json();
       setIsTyping(false);
-      if (data.card) pushMsg({ role: 'bot', card: data.card });
-      pushMsg({ role: 'bot', text: data.text });
+      const chips = data.card?.options || null;
+      pushMsg({ role: 'bot', text: data.text, chips });
     } catch (err) {
       setIsTyping(false);
       pushMsg({ role: 'bot', text: "Couldn't reach the server. Make sure the backend is running on localhost:8000." });
