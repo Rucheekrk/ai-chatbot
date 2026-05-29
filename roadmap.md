@@ -32,7 +32,10 @@ Build and demo a decision-driven AI chatbot that local service businesses can em
 - [x] GPT-4o-mini few-shot prompt: rag / tool / clarify / escalate
 - [x] Returns intent + confidence + tool
 - [x] Applies CONFIDENCE_CLARIFY and CONFIDENCE_ESCALATE thresholds
-- [x] Pricing questions route to tool/price_estimator (not rag)
+- [x] Pricing questions route to RAG (KB has full pricing tables)
+- [x] price_estimator tool reserved for booking/quote intent only
+- [x] Conversation context (last 2 messages) injected into prompt for multi-turn accuracy
+- [x] Clarify → service-selection chip replies correctly classified as tool/price_estimator
 
 ### RAG (rag/retriever.py + rag/embedder.py)
 - [x] embed() helper — text-embedding-3-small
@@ -42,8 +45,10 @@ Build and demo a decision-driven AI chatbot that local service businesses can em
 ### Generator (agent/generator.py)
 - [x] RAG path — Sage persona, GPT call with context chunks
 - [x] Tool path — price_estimator multi-turn flow (service → yard size → price + card)
-- [x] Clarify path — options cards for service and yard size
+- [x] price_estimator extracts service + yard_size from user message before prompting (skips unnecessary round trips)
+- [x] Clarify path — options cards for service and yard size, wires into price_estimator on service selection
 - [x] Escalate path — GPT summary, create_handoff, handoff card
+- [x] Closing phrases detected in clarify path → graceful goodbye
 - [x] check_availability + book_visit — stubbed (Google Calendar MCP TODO)
 
 ### Tools & Actions
@@ -53,36 +58,63 @@ Build and demo a decision-driven AI chatbot that local service businesses can em
 
 ### API Layer
 - [x] models/schemas.py — ChatRequest, ChatResponse (Pydantic)
-- [x] routes/chat.py — POST /chat, session state, multi-turn price estimator
+- [x] routes/chat.py — POST /chat, session state, lead capture flow, off-topic 3-strike loop
 - [x] main.py — FastAPI app with CORS
 
-### Tested in Postman
-- [x] RAG path — general service questions
-- [x] Escalate path — complaint → handoff card
-- [x] Price estimator — 3-turn flow (question → service → yard size → price + card)
-- [x] Guardrails — injection, off-topic, sensitive PII, LLM fallback all blocking correctly
+---
+
+## Phase 3 — Testing & Hardening (Done)
+
+### Guardrail improvements
+- [x] Off-topic 3-strike loop — strike 1: soft redirect, strike 2: firmer, strike 3: final message
+- [x] Off-topic bypass during lead capture — names/phone numbers don't trigger the guardrail
+- [x] LLM fallback prompt tightened — short chip replies ("Yes", "Book now", "Reach out") always pass
+- [x] Sensitive PII blocking — SSN, credit card patterns blocked before reaching the LLM
+
+### Lead capture flow
+- [x] "Reach out to me later" → collects name → collects phone → calls create_lead → saved to DB
+- [x] Works both after price estimator and as a standalone request
+- [x] PII extracted from message automatically (phone number pre-filled if detected in text)
+
+### RAG knowledge base improvements
+- [x] FAQ sections added to lawn/services.md — what services, aeration, overseeding, fertilization, bed weeding
+- [x] FAQ sections added to lawn/service-area.md — service area coverage, weekend hours
+- [x] FAQ section added to lawn/policies.md — payment methods
+- [x] One `##` section per Q&A pair — each chunk is focused, prevents embedding score dilution
+- [x] All target queries now score ≥ 0.50 against correct chunks (up from 0.32–0.46)
+
+### Bug fixes
+- [x] Chip selections ("Medium (¼ to ½ acre)") no longer blocked by guardrail as off-topic
+- [x] Clarify → service chip selection correctly wires into price_estimator via classifier examples
+- [x] price_estimator extracts service + yard_size from first message (no unnecessary round trips)
+- [x] Pricing questions reclassified to RAG; price_estimator reserved for booking intent only
+
+### Automated testing
+- [x] test_runner.py — 34 automated test cases across 8 paths, runs against live backend
+- [x] test-plan.md — human-readable test plan for manual/UI testing reference
+- [x] All 34 tests passing
 
 ---
 
-## Phase 3 — Integration (In Progress)
-- [ ] Google Calendar MCP: check_availability + book_visit
-- [ ] "Reach out to me later" flow — collect name/phone across turns, call create_lead
-
----
-
-## Phase 4 — Frontend Wiring
-- [ ] Wire frontend useChat hook to real POST /chat endpoint
-- [ ] Verify bot event (text + chips) and card event (booking/estimate/handoff/lead) render correctly
+## Phase 4 — Frontend Wiring (Next)
+- [ ] Wire frontend JSX to real POST /chat endpoint
+- [ ] Verify chips, cards (booking/estimate/handoff/lead) render correctly end to end
 - [ ] Test all 3 business personas end to end
 
 ---
 
-## Phase 5 — Acceptance Testing
-- [ ] Run 04-scenarios.json: 7 scenarios x 3 businesses
+## Phase 5 — Calendar Integration
+- [ ] Google Calendar MCP: check_availability + book_visit (real integration)
+- [ ] Replace "coming soon" stub response with live calendar flow
+
+---
+
+## Phase 6 — Acceptance Testing
 - [ ] All RAG paths answer correctly within 3s
 - [ ] Tool paths (Google Calendar) complete within 3s
 - [ ] Guardrails block injection/off-topic/harmful inputs
-- [ ] Escalate path triggers correctly on low confidence
+- [ ] Escalate path triggers correctly
+- [ ] All 3 business personas tested end to end
 
 ---
 
