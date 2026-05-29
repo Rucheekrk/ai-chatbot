@@ -125,6 +125,24 @@ def intent_classify(text, chat_history=None):
     confidence: 0.94
     tool: book_visit
 
+    Context: ASSISTANT just asked "What service are you looking for?"
+    User: "Spring cleanup"
+    intent: tool
+    confidence: 0.95
+    tool: price_estimator
+
+    Context: ASSISTANT just asked "What service are you looking for?"
+    User: "Weekly mowing"
+    intent: tool
+    confidence: 0.95
+    tool: price_estimator
+
+    Context: ASSISTANT just asked "What service are you looking for?"
+    User: "Fall leaf removal"
+    intent: tool
+    confidence: 0.94
+    tool: price_estimator
+
     User: "Is tomorrow morning available?"
     intent: tool
     confidence: 0.95
@@ -140,11 +158,6 @@ def intent_classify(text, chat_history=None):
     confidence: 0.92
     tool: check_availability
 
-    User: "I have a large yard, how much would it cost?"
-    intent: tool
-    confidence: 0.92
-    tool: price_estimator
-
     User: "Can you give me a price estimate for my property?"
     intent: tool
     confidence: 0.91
@@ -155,20 +168,35 @@ def intent_classify(text, chat_history=None):
     confidence: 0.93
     tool: price_estimator
 
-    User: "How much does lawn mowing cost?"
+    User: "I'd like to get a quote and book a service"
     intent: tool
-    confidence: 0.95
+    confidence: 0.94
     tool: price_estimator
+
+    User: "How much does lawn mowing cost?"
+    intent: rag
+    confidence: 0.95
+    tool: none
 
     User: "What's the price for lawn care?"
-    intent: tool
+    intent: rag
     confidence: 0.94
-    tool: price_estimator
+    tool: none
 
     User: "What does your service cost?"
-    intent: tool
-    confidence: 0.94
-    tool: price_estimator
+    intent: rag
+    confidence: 0.93
+    tool: none
+
+    User: "I have a large yard, how much would it cost?"
+    intent: rag
+    confidence: 0.92
+    tool: none
+
+    User: "How much does spring cleanup cost for a small yard?"
+    intent: rag
+    confidence: 0.93
+    tool: none
 
     ---
 

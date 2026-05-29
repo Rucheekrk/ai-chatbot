@@ -1,3 +1,9 @@
+## Services We Offer
+
+Green Acres Lawn Care provides the following lawn care services: weekly mowing, biweekly mowing, spring cleanup, fall leaf removal, mulch installation, and add-on services including aeration, overseeding, fertilization, and bed weeding. Below is a full description of each service we offer.
+
+---
+
 ## Standard Mowing Service
 
 Standard mowing service includes:
@@ -59,3 +65,23 @@ The following services can be added to any mowing plan or seasonal service:
 - **Bed weeding** — Hand-pulling weeds from flower beds and landscape areas. Available as a one-time or recurring add-on.
 
 Contact us to add any of these to your service plan. Add-on pricing is quoted based on yard size and frequency.
+
+## FAQ — What Services We Offer
+Q: What services do you offer? What do you provide?
+A: We offer weekly mowing, biweekly mowing, spring cleanup, fall leaf removal, mulch installation, and add-on services including aeration, overseeding, fertilization, and bed weeding.
+
+## FAQ — Aeration
+Q: Do you offer aeration?
+A: Yes, core aeration reduces soil compaction and improves root growth. Recommended once a year — fall for fescue, spring for bermuda. Can be paired with overseeding.
+
+## FAQ — Overseeding
+Q: Do you offer overseeding?
+A: Yes, overseeding fills bare patches and thickens the lawn. Best done alongside aeration.
+
+## FAQ — Fertilization
+Q: Do you offer fertilization?
+A: Yes, we apply slow-release granular fertilizer suited to your grass type to promote healthy growth and color.
+
+## FAQ — Bed Weeding
+Q: Do you do bed weeding?
+A: Yes, hand-pulling weeds from flower beds and landscape areas. Available as a one-time or recurring add-on.

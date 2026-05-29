@@ -36,13 +36,32 @@ def generate(intent, confidence, tool, user_message, chat_history, pii, session)
             service = session.get("service")
             yard_size = session.get("yard_size")
 
+            service_map = {
+                "weekly mowing": "mowing_weekly",
+                "biweekly mowing": "mowing_biweekly",
+                "spring cleanup": "spring_cleanup",
+                "fall leaf removal": "fall_leaf_removal"
+            }
+            msg_lower = user_message.lower()
+
+            if not service:
+                for service_name, service_key in service_map.items():
+                    if service_name in msg_lower:
+                        service = session["service"] = service_key
+                        break
+
             if not service:
                 session["pending_tool"] = "price_estimator"
                 return {"text": "What service are you interested in?", "card": {"type": "options", "options": ["weekly mowing", "biweekly mowing", "spring cleanup", "fall leaf removal"]}}
 
             if not yard_size:
+                if "small" in msg_lower: yard_size = session["yard_size"] = "small"
+                elif "medium" in msg_lower: yard_size = session["yard_size"] = "medium"
+                elif "large" in msg_lower: yard_size = session["yard_size"] = "large"
+
+            if not yard_size:
                 return {"text": "What is your yard size?", "card": {"type": "options", "options": ["Small (up to ¼ acre)", "Medium (¼ to ½ acre)", "Large (over ½ acre)"]}}
-            
+
             result = price_estimator(service, yard_size)
             service_display = service.replace("_", " ").title()
             session.pop("pending_tool", None)
@@ -82,10 +101,10 @@ def generate(intent, confidence, tool, user_message, chat_history, pii, session)
 
         if not session.get("service"):
             return {"text": "What service are you looking for?", "card": {"type": "options", "options": ["Weekly mowing", "Biweekly mowing", "Spring cleanup", "Fall leaf removal"]}}
-        
+
         if not session.get("yard_size"):
             return {"text": "What is your yard size?", "card": {"type": "options", "options": ["Small (up to ¼ acre)", "Medium (¼ to ½ acre)", "Large (over ½ acre)"]}}
-        
+
         return {"text": "Could you give me a bit more detail? I want to make sure I point you in the right direction.", "card": None}
 
 

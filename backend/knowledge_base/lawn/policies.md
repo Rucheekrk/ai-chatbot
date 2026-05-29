@@ -46,3 +46,7 @@ Online rescheduling with real-time calendar availability is coming soon. For now
 - Please ensure gate codes or access instructions are on file before your scheduled visit
 - If the crew cannot access the property, the visit may be skipped and billed as a no-show
 - Dogs should be secured indoors during service for safety of the crew and your pet
+
+## FAQ — Payment Methods
+Q: What are your payment methods? How can I pay?
+A: We accept credit card, debit card, Venmo, and check. Payment is due within 48 hours of service completion. Invoices are sent via email after each visit. Recurring customers can set up auto-pay.

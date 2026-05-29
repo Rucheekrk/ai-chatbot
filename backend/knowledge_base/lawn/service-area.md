@@ -38,3 +38,11 @@ If you are unsure whether your address is in our service area, contact us and we
 - Monday through Friday: 7:00 AM – 6:00 PM
 - Saturday: 8:00 AM – 4:00 PM
 - Sunday: No service
+
+## FAQ — Service Area
+Q: What areas do you service? Do you service my neighborhood? Are you available in my area?
+A: Our primary service area covers Greenfield, Maple Park, Northside, and Westbrook. Extended coverage includes Ridgewood Heights, Elmwood Estates, Cedar Bluff, and Lakewood Crossing. Contact us if your address is not listed and we will confirm within 1 business day.
+
+## FAQ — Weekend Hours
+Q: Do you work on weekends? Are you available on Saturdays? When are you open?
+A: Yes, we work Saturdays 8:00 AM to 4:00 PM. We do not service on Sundays. Weekday hours are Monday through Friday, 7:00 AM to 6:00 PM.

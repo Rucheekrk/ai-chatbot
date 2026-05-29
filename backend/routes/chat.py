@@ -81,9 +81,12 @@ def chat(request: ChatRequest):
         }
 
         msg_lower = message.lower()
-        if not session.get("service") and msg_lower in service_map:
-            session["service"] = service_map[msg_lower]
-        elif not session.get("yard_size"):
+        if not session.get("service") and "?" not in msg_lower:
+            for service_name, service_key in service_map.items():
+                if service_name in msg_lower:
+                    session["service"] = service_key
+                    break
+        if session.get("service") and not session.get("yard_size"):
             if "small" in msg_lower:
                 session["yard_size"] = "small"
             elif "medium" in msg_lower:
@@ -95,7 +98,7 @@ def chat(request: ChatRequest):
     session["history"].append({"role": "user", "content": message})
 
     # 5. classify (skip if pending tool is complete)
-    if session.get("pending_tool") == "price_estimator" and session.get("service") and session.get("yard_size"):
+    if session.get("pending_tool") == "price_estimator" and session.get("service") and "?" not in message:
         intent = "tool"
         confidence = 1.0
         tool = "price_estimator"
